@@ -1,3 +1,5 @@
+"use strict";
+
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 
@@ -7,7 +9,7 @@ module.exports = {
     path: path.resolve(__dirname, "build"),
     filename: "bundle.js"
   },
-  devtool: "#eval-source-map",
+  devtool: "eval-source-map",
   plugins: [
     new HtmlWebpackPlugin({
       title: "Bullet Hell Defense",

@@ -6,6 +6,7 @@
   </head>
   <body>
     <canvas id="lesson01-canvas" style="border: none;" width="500" height="500"></canvas>
+    
     <script id="shader-fs" type="x-shader/x-fragment">
       precision mediump float;
 
@@ -14,13 +15,48 @@
       }
     </script>
     <script id="shader-vs" type="x-shader/x-vertex">
+      attribute vec2 modelVertex;
+
+      uniform vec2 position;
+      uniform float worldSize;
+      uniform float modelSize;
+
+      void main(void) {
+        gl_Position = vec4((position + (modelVertex * modelSize)) / (worldSize / 2.0), 0.0, 1.0);
+      }
+    </script>
+    
+    <script id="shader-fs-qtree" type="x-shader/x-fragment">
+      precision mediump float;
+      
+      varying vec2 quadCoord;
+
+      void main(void) {
+        float margin = 0.1;
+        if (quadCoord.x > 1.0 - margin
+          || quadCoord.x < 0.0 + margin
+          || quadCoord.y > 1.0 - margin
+          || quadCoord.y < 0.0 + margin
+        ) {
+          gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+        } else {
+          gl_FragColor = vec4(0.0, 0.0, 0.0, 0.0);
+        }
+      }
+    </script>
+    
+    <script id="shader-vs-qtree" type="x-shader/x-vertex">
       attribute vec3 aVertexPosition;
+      attribute vec2 quadCoordIn;
 
       uniform mat4 uMVMatrix;
       uniform mat4 uPMatrix;
+      
+      varying vec2 quadCoord;
 
       void main(void) {
         gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0);
+        quadCoord = quadCoordIn;
       }
     </script>
   </body>
