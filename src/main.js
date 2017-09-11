@@ -10,12 +10,17 @@ import { createBuffer, createShaderProgram } from "td-glhelp";
 const quadTree = new QuadTree();
 console.log("Created qtree " + quadTree);
 const worldSize = 64;
-const entity = new Entity({
-  position: vec2.fromValues(5, 5),
-  size: 2,
-  parent: quadTree
-});
-console.log("final parent", entity.parent.toString());
+const entities = [];
+const numEntities = 256;
+
+for (let i = 0; i < 256; i++)
+  entities.push(
+    new Entity({
+      position: vec2.fromValues(5, 5),
+      size: 0.5,
+      parent: quadTree
+    })
+  );
 
 const genRandomVector = () => {
   return vec2.normalize(
@@ -27,8 +32,31 @@ const genRandomVector = () => {
   );
 };
 
-const moveEntity = () => {
-  entity.move(vec2.add(vec2.create(), entity.position, genRandomVector()));
+const calcMoveLength = () => Math.random() * 1000;
+
+const moveVars = entities.map(entity => {
+  return {
+    entity,
+    moveVector: genRandomVector(),
+    moveLength: calcMoveLength(),
+    lastMoveTime: performance.now()
+  };
+});
+
+const moveEntities = () => {
+  moveVars.forEach(moveVar => {
+    const now = performance.now();
+    if (
+      !moveVar.entity.move(
+        vec2.add(vec2.create(), moveVar.entity.position, moveVar.moveVector)
+      ) ||
+      now > moveVar.lastMoveTime + moveVar.moveVarmoveLength
+    ) {
+      moveVar.lastMoveTime = now;
+      moveVar.moveVector = genRandomVector();
+      moveVar.moveLength = calcMoveLength();
+    }
+  });
 };
 
 function webGLStart() {
@@ -43,7 +71,7 @@ function webGLStart() {
   drawScene();
 
   const loop = () => {
-    moveEntity();
+    moveEntities();
     drawScene();
     window.setTimeout(loop, 20);
   };
@@ -146,7 +174,9 @@ function drawScene() {
   quadTree.forEach(node => {
     drawSquare(node.position, node.size);
   });
-  drawTriangle(entity.position, entity.size);
+  entities.forEach(entity => {
+    drawTriangle(entity.position, entity.size);
+  });
 }
 
 var gl;
