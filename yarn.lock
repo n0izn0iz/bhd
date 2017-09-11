@@ -3402,6 +3402,9 @@ tar@^2.2.1:
     gl-matrix "^2.4.0"
     td-aabb "file:../../../.cache/yarn/v1/td-aabb"
 
+"td-glhelp@file:../td-glhelp":
+  version "0.0.0"
+
 "td-quadtree@file:../td-quadtree":
   version "0.0.0"
   dependencies:
