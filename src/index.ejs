@@ -52,13 +52,13 @@
           || quadCoord.y > 1.0 - margin
           || quadCoord.y < 0.0 + margin
         ) {
-          gl_FragColor = vec4(1.0, 1.0, 1.0, 0.5);
+          gl_FragColor = vec4(1.0, 1.0, 1.0, 0.2);
         } else {
           gl_FragColor = vec4(0.0, 0.0, 0.0, 0.0);
         }
       }
     </script>
-    
+
     <script id="shader-vs-quadcoord" type="x-shader/x-vertex">
       // with this shader the world will fill the whole viewport
       attribute vec2 modelVertex;
