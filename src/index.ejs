@@ -14,6 +14,14 @@
         gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
       }
     </script>
+    <script id="shader-fs-rgba" type="x-shader/x-fragment">
+      precision mediump float;
+      uniform vec4 color;
+
+      void main(void) {
+        gl_FragColor = color;
+      }
+    </script>
     <script id="shader-vs-basic" type="x-shader/x-vertex">
       // with this shader the world will fill the whole viewport
       attribute vec2 modelVertex;

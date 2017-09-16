@@ -104,9 +104,9 @@ var shaderProgram, shaderProgramQtree;
 function initShaders() {
   shaderProgram = createShaderProgram(gl, {
     name: "default",
-    shadersIds: ["shader-vs-basic", "shader-fs-white"],
+    shadersIds: ["shader-vs-basic", "shader-fs-rgba"],
     attributesNames: ["modelVertex"],
-    uniformsNames: ["position", "worldSize", "modelSize"]
+    uniformsNames: ["position", "worldSize", "modelSize", "color"]
   });
 
   shaderProgramQtree = createShaderProgram(gl, {
@@ -117,7 +117,7 @@ function initShaders() {
   });
 }
 
-const drawTriangle = (position, size) => {
+const drawTriangle = (position, size, color) => {
   gl.useProgram(shaderProgram);
   gl.bindBuffer(gl.ARRAY_BUFFER, triangleVertexPositionBuffer);
   gl.vertexAttribPointer(
@@ -130,6 +130,7 @@ const drawTriangle = (position, size) => {
   );
   gl.enableVertexAttribArray(shaderProgram.attributes.modelVertex);
   gl.uniform2fv(shaderProgram.uniforms.position, position);
+  gl.uniform4fv(shaderProgram.uniforms.color, color);
   gl.uniform1f(shaderProgram.uniforms.modelSize, size);
   gl.uniform1f(shaderProgram.uniforms.worldSize, worldSize);
   gl.enable(gl.BLEND);
@@ -170,6 +171,7 @@ const drawSquare = (position, size) => {
 };
 
 const drawEntity = () => {};
+const white = [1, 1, 1, 1];
 
 function drawScene() {
   gl.viewport(0, 0, gl.viewportWidth, gl.viewportHeight);
@@ -178,7 +180,7 @@ function drawScene() {
     drawSquare(node.position, node.size);
   });
   entities.forEach(entity => {
-    drawTriangle(entity.position, entity.size);
+    drawTriangle(entity.position, entity.size, white);
   });
 }
 
