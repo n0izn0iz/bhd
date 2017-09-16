@@ -27,20 +27,38 @@ const genRandomVector = () => {
   return vec2.fromValues(coinFlip() ? x : -x, coinFlip() ? y : -y);
 };
 
+const genRandomPosition = () => {
+  return vec2.scale(
+    vec2.create(),
+    genRandomVector(),
+    half(worldSize - triangleSize)
+  );
+};
+
 for (let i = 0; i < numEntities; i++) {
   const entity = new Entity({
-    position: vec2.scale(
-      vec2.create(),
-      genRandomVector(),
-      half(worldSize - triangleSize)
-    ),
+    position: genRandomPosition(),
     size: triangleSize
   });
+  let i = 0;
+  while (quadTree.collide(entity) && i < 100 - 1) {
+    entity.position = genRandomPosition();
+    i += 1;
+  }
   if (!quadTree.collide(entity)) {
     quadTree.insert(entity);
     entities.push(entity);
   }
 }
+
+if (entities.length !== numEntities)
+  throw new Error(
+    "Failed to generate the required number of entities (" +
+      entities.length +
+      "/" +
+      numEntities +
+      ")"
+  );
 
 const calcMoveLength = () => Math.random() * 1000;
 
