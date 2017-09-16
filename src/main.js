@@ -165,6 +165,15 @@ function initShaders() {
   });
 }
 
+const drawTriangleArray = position => {
+  gl.uniform2fv(shaderProgram.uniforms.position, position);
+  gl.drawArrays(gl.TRIANGLES, 0, triangleVertexPositionBuffer.numItems);
+};
+
+const setTriangleColor = color => {
+  gl.uniform4fv(shaderProgram.uniforms.color, color);
+};
+
 const drawTriangle = (position, size, color) => {
   gl.useProgram(shaderProgram);
   gl.bindBuffer(gl.ARRAY_BUFFER, triangleVertexPositionBuffer);
@@ -177,14 +186,20 @@ const drawTriangle = (position, size, color) => {
     0
   );
   gl.enableVertexAttribArray(shaderProgram.attributes.modelVertex);
-  gl.uniform2fv(shaderProgram.uniforms.position, position);
-  gl.uniform4fv(shaderProgram.uniforms.color, color);
+
   gl.uniform1f(shaderProgram.uniforms.modelSize, size);
   gl.uniform1f(shaderProgram.uniforms.worldSize, worldSize);
   gl.enable(gl.BLEND);
   gl.disable(gl.DEPTH_TEST);
   gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
-  gl.drawArrays(gl.TRIANGLES, 0, triangleVertexPositionBuffer.numItems);
+  setTriangleColor(color);
+  drawTriangleArray(position);
+};
+
+const drawSquareArray = (position, size) => {
+  gl.uniform2fv(shaderProgramQtree.uniforms.position, position);
+  gl.uniform1f(shaderProgramQtree.uniforms.modelSize, size);
+  gl.drawArrays(gl.TRIANGLE_STRIP, 0, squareVertexPositionBuffer.numItems);
 };
 
 const drawSquare = (position, size) => {
@@ -209,30 +224,81 @@ const drawSquare = (position, size) => {
     0
   );
   gl.enableVertexAttribArray(shaderProgramQtree.attributes.quadCoordIn);
-  gl.uniform2fv(shaderProgramQtree.uniforms.position, position);
-  gl.uniform1f(shaderProgramQtree.uniforms.modelSize, size);
   gl.uniform1f(shaderProgramQtree.uniforms.worldSize, worldSize);
   gl.enable(gl.BLEND);
   gl.disable(gl.DEPTH_TEST);
   gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
-  gl.drawArrays(gl.TRIANGLE_STRIP, 0, squareVertexPositionBuffer.numItems);
+  drawSquareArray(position, size);
 };
 
-const drawEntity = () => {};
+const drawTree = () => {
+  gl.useProgram(shaderProgramQtree);
+  gl.bindBuffer(gl.ARRAY_BUFFER, squareVertexPositionBuffer);
+  gl.vertexAttribPointer(
+    shaderProgramQtree.attributes.modelVertex,
+    squareVertexPositionBuffer.itemSize,
+    gl.FLOAT,
+    false,
+    0,
+    0
+  );
+  gl.enableVertexAttribArray(shaderProgramQtree.attributes.modelVertex);
+  gl.bindBuffer(gl.ARRAY_BUFFER, squareQuadCoordBuffer);
+  gl.vertexAttribPointer(
+    shaderProgramQtree.attributes.quadCoordIn,
+    squareQuadCoordBuffer.itemSize,
+    gl.FLOAT,
+    false,
+    0,
+    0
+  );
+  gl.enableVertexAttribArray(shaderProgramQtree.attributes.quadCoordIn);
+  gl.uniform1f(shaderProgramQtree.uniforms.worldSize, worldSize);
+  gl.enable(gl.BLEND);
+  gl.disable(gl.DEPTH_TEST);
+  gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+  quadTree.forEach(node => {
+    drawSquareArray(node.position, node.size);
+  });
+};
+
+const drawEntities = () => {
+  gl.useProgram(shaderProgram);
+  gl.bindBuffer(gl.ARRAY_BUFFER, triangleVertexPositionBuffer);
+  gl.vertexAttribPointer(
+    shaderProgram.vertexPositionAttribute,
+    triangleVertexPositionBuffer.itemSize,
+    gl.FLOAT,
+    false,
+    0,
+    0
+  );
+  gl.enableVertexAttribArray(shaderProgram.attributes.modelVertex);
+
+  gl.uniform1f(shaderProgram.uniforms.modelSize, triangleSize);
+  gl.uniform1f(shaderProgram.uniforms.worldSize, worldSize);
+  gl.enable(gl.BLEND);
+  gl.disable(gl.DEPTH_TEST);
+  gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+  setTriangleColor(white);
+  entities.forEach(entity => {
+    let beRed = false;
+    if (entity.aABB.containsPoint(mousePos)) {
+      beRed = true;
+      setTriangleColor(red);
+    }
+    drawTriangleArray(entity.position);
+    if (beRed) setTriangleColor(white);
+  });
+};
 const white = [1, 1, 1, 1];
 const red = [1, 0, 0, 1];
 
 function drawScene() {
   gl.viewport(0, 0, gl.viewportWidth, gl.viewportHeight);
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-  quadTree.forEach(node => {
-    drawSquare(node.position, node.size);
-  });
-  entities.forEach(entity => {
-    if (entity.aABB.containsPoint(mousePos))
-      drawTriangle(entity.position, entity.size, red);
-    else drawTriangle(entity.position, entity.size, white);
-  });
+  drawTree();
+  drawEntities();
 }
 
 var gl;
