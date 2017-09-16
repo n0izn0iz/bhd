@@ -5,6 +5,7 @@ console.log("Hello, world!");
 import { vec2 } from "gl-matrix";
 import QuadTree from "td-quadtree";
 import Entity from "td-entity";
+import AABB from "td-aabb";
 import { createBuffer, createShaderProgram } from "td-glhelp";
 
 const quadTree = new QuadTree();
@@ -42,24 +43,29 @@ const calcMoveLength = () => Math.random() * 1000;
 const moveVars = entities.map(entity => {
   return {
     entity,
-    moveVector: genRandomVector(),
-    moveLength: calcMoveLength(),
-    lastMoveTime: performance.now()
+    moveVector: genRandomVector()
   };
 });
 
+const addVectors = (a, b) => {
+  return vec2.add(vec2.create(), a, b);
+};
+
 const moveEntities = () => {
   moveVars.forEach(moveVar => {
-    const now = performance.now();
-    if (
-      !moveVar.entity.move(
-        vec2.add(vec2.create(), moveVar.entity.position, moveVar.moveVector)
-      ) ||
-      now > moveVar.lastMoveTime + moveVar.moveVarmoveLength
+    const { entity } = moveVar;
+    const aABB = new AABB({
+      position: addVectors(entity.position, moveVar.moveVector),
+      size: entity.size
+    });
+    let i = 0;
+    while (
+      !(!quadTree.collideAABB(aABB, entity) && entity.move(aABB.position)) &&
+      i < 100
     ) {
-      moveVar.lastMoveTime = now;
       moveVar.moveVector = genRandomVector();
-      moveVar.moveLength = calcMoveLength();
+      aABB.position = addVectors(entity.position, moveVar.moveVector);
+      i++;
     }
   });
 };

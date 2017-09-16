@@ -9,6 +9,7 @@
     "babel-preset-flow": "^6.23.0",
     "gl-matrix": "^2.4.0",
     "html-webpack-plugin": "^2.30.1",
+    "td-aabb": "file:../td-aabb",
     "td-entity": "file:../td-entity",
     "td-glhelp": "file:../td-glhelp",
     "td-quadtree": "file:../td-quadtree",
