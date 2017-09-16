@@ -62,8 +62,26 @@ const moveEntities = () => {
   });
 };
 
+let mousePos = vec2.create();
+
+const getMousePos = (canvas, evt) => {
+  var rect = canvas.getBoundingClientRect();
+  return vec2.fromValues(
+    ((evt.clientX - rect.left) / canvasSize * 2 - 1) * half(worldSize),
+    -((evt.clientY - rect.top) / canvasSize * 2 - 1) * half(worldSize)
+  );
+};
+
 function webGLStart() {
   var canvas = document.getElementById("canvas");
+
+  canvas.addEventListener(
+    "mousemove",
+    evt => {
+      mousePos = getMousePos(canvas, evt);
+    },
+    false
+  );
   initGL(canvas);
   initShaders();
   initBuffers();
@@ -172,6 +190,7 @@ const drawSquare = (position, size) => {
 
 const drawEntity = () => {};
 const white = [1, 1, 1, 1];
+const red = [1, 0, 0, 1];
 
 function drawScene() {
   gl.viewport(0, 0, gl.viewportWidth, gl.viewportHeight);
@@ -180,7 +199,9 @@ function drawScene() {
     drawSquare(node.position, node.size);
   });
   entities.forEach(entity => {
-    drawTriangle(entity.position, entity.size, white);
+    if (entity.aABB.containsPoint(mousePos))
+      drawTriangle(entity.position, entity.size, red);
+    else drawTriangle(entity.position, entity.size, white);
   });
 }
 
