@@ -35,9 +35,10 @@
       precision mediump float;
       
       varying vec2 quadCoord;
+      varying float modelSz;
 
       void main(void) {
-        float margin = 0.01;
+        float margin = 0.05 / modelSz;
         if (quadCoord.x > 1.0 - margin
           || quadCoord.x < 0.0 + margin
           || quadCoord.y > 1.0 - margin
@@ -59,13 +60,16 @@
       uniform float worldSize;
       uniform float modelSize;
 
+      varying float modelSz;
+
       varying vec2 quadCoord;
 
       void main(void) {
         // pass the quadCoord to the fragment shader
         quadCoord = quadCoordIn;
-        /* 
-        ** the fourth component is worldSize because the GPU pipeline 
+        modelSz = modelSize;
+        /*
+        ** the fourth component is worldSize because the GPU pipeline
         ** will divide gl_Position.xyz by gl_Position.w
         */
         gl_Position = vec4((modelVertex * modelSize / 2.0) + position, 0.0, worldSize / 2.0); 
