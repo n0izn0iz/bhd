@@ -17,6 +17,15 @@ const canvasSize = 1024;
 const entities = [];
 const numEntities = 256;
 const triangleSize = 0.5;
+const one = 1;
+const half = number => number / 2;
+const coinFlip = () => Math.random() >= half(one);
+
+const genRandomVector = () => {
+  const x = Math.random();
+  const y = Math.random();
+  return vec2.fromValues(coinFlip() ? x : -x, coinFlip() ? y : -y);
+};
 
 for (let i = 0; i < numEntities; i++) {
   const entity = new Entity({
@@ -32,18 +41,6 @@ for (let i = 0; i < numEntities; i++) {
     entities.push(entity);
   }
 }
-
-const one = 1;
-
-const half = number => number / 2;
-
-const coinFlip = () => Math.random() >= half(one);
-
-const genRandomVector = () => {
-  const x = Math.random();
-  const y = Math.random();
-  return vec2.fromValues(coinFlip() ? x : -x, coinFlip() ? y : -y);
-};
 
 const calcMoveLength = () => Math.random() * 1000;
 
