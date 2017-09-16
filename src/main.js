@@ -17,14 +17,13 @@ const canvasSize = 1024;
 const entities = [];
 const numEntities = 256;
 
-for (let i = 0; i < numEntities; i++)
-  entities.push(
-    new Entity({
-      position: vec2.fromValues(5, 5),
-      size: 0.5,
-      parent: quadTree
-    })
-  );
+for (let i = 0; i < numEntities; i++) {
+  const entity = new Entity({
+    position: vec2.fromValues(5, 5),
+    size: 0.5
+  });
+  if (quadTree.insert(entity)) entities.push(entity);
+}
 
 const one = 1;
 
