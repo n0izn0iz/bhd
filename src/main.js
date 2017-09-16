@@ -65,7 +65,7 @@ const calcMoveLength = () => Math.random() * 1000;
 const moveVars = entities.map(entity => {
   return {
     entity,
-    moveVector: genRandomVector()
+    moveVector: vec2.normalize(vec2.create(), genRandomVector())
   };
 });
 
@@ -83,9 +83,9 @@ const moveEntities = () => {
     let i = 0;
     while (
       !(!quadTree.collideAABB(aABB, entity) && entity.move(aABB.position)) &&
-      i < 100
+      i < 5
     ) {
-      moveVar.moveVector = genRandomVector();
+      moveVar.moveVector = vec2.normalize(vec2.create(), genRandomVector());
       aABB.position = addVectors(entity.position, moveVar.moveVector);
       i++;
     }
