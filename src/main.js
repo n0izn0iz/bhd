@@ -16,13 +16,21 @@ const canvasSize = 1024;
 
 const entities = [];
 const numEntities = 256;
+const triangleSize = 0.5;
 
 for (let i = 0; i < numEntities; i++) {
   const entity = new Entity({
-    position: vec2.fromValues(5, 5),
-    size: 0.5
+    position: vec2.scale(
+      vec2.create(),
+      genRandomVector(),
+      half(worldSize - triangleSize)
+    ),
+    size: triangleSize
   });
-  if (quadTree.insert(entity)) entities.push(entity);
+  if (!quadTree.collide(entity)) {
+    quadTree.insert(entity);
+    entities.push(entity);
+  }
 }
 
 const one = 1;
