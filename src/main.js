@@ -17,7 +17,7 @@ const canvasSize = 1024;
 const entities = [];
 const numEntities = 256;
 
-for (let i = 0; i < 256; i++)
+for (let i = 0; i < numEntities; i++)
   entities.push(
     new Entity({
       position: vec2.fromValues(5, 5),
