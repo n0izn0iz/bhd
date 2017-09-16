@@ -25,14 +25,16 @@ for (let i = 0; i < 256; i++)
     })
   );
 
+const one = 1;
+
+const half = number => number / 2;
+
+const coinFlip = () => Math.random() >= half(one);
+
 const genRandomVector = () => {
-  return vec2.normalize(
-    vec2.create(),
-    vec2.fromValues(
-      Math.random() - Math.random(),
-      Math.random() - Math.random()
-    )
-  );
+  const x = Math.random();
+  const y = Math.random();
+  return vec2.fromValues(coinFlip() ? x : -x, coinFlip() ? y : -y);
 };
 
 const calcMoveLength = () => Math.random() * 1000;
