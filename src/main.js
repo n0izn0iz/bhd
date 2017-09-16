@@ -10,6 +10,9 @@ import { createBuffer, createShaderProgram } from "td-glhelp";
 const quadTree = new QuadTree();
 console.log("Created qtree " + quadTree);
 const worldSize = 64;
+
+const canvasSize = 1024;
+
 const entities = [];
 const numEntities = 256;
 
@@ -60,7 +63,7 @@ const moveEntities = () => {
 };
 
 function webGLStart() {
-  var canvas = document.getElementById("lesson01-canvas");
+  var canvas = document.getElementById("canvas");
   initGL(canvas);
   initShaders();
   initBuffers();
